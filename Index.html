@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Animation for Epaaaww</title>
+    <style>
+        body {
+            background-color: #ffebee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            flex-direction: column;
+        }
+        
+        .love-container {
+            position: relative;
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            height: 100px;
+        }
+        
+        .love-text {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: float 3s ease-in-out infinite;
+            text-shadow: 0 0 10px rgba(255, 192, 203, 0.5);
+        }
+        
+        .message-text {
+            font-size: 1.2rem;
+            color: #d23669;
+            max-width: 80%;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(210, 54, 105, 0.2);
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .heart {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: #ff6b8b;
+            transform: rotate(45deg);
+            animation: hearts 4s ease-in-out infinite;
+            opacity: 0;
+        }
+        
+        .heart:before,
+        .heart:after {
+            content: '';
+            width: 30px;
+            height: 30px;
+            background-color: inherit;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .heart:before {
+            top: -15px;
+            left: 0;
+        }
+        
+        .heart:after {
+            top: 0;
+            left: -15px;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+        
+        @keyframes hearts {
+            0% {
+                transform: rotate(45deg) translateY(0) scale(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: rotate(45deg) translateY(-200px) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        .audio-player {
+            margin-top: 20px;
+            background: rgba(255, 182, 193, 0.7);
+            padding: 15px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+        }
+        
+        audio {
+            outline: none;
+        }
+        
+        audio::-webkit-media-controls-panel {
+            background-color: #ffc0cb;
+        }
+
+        .audio-error {
+            color: #d32f2f;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        /* Cmatrix-style Loading Animation */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffebee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+        }
+        
+        .matrix-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .matrix-column {
+            position: absolute;
+            top: 0;
+            color: #ff69b4;
+            font-size: 18px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            text-shadow: 0 0 5px #ff69b4, 0 0 10px #ff69b4;
+            opacity: 0.8;
+            animation: matrix-fall linear infinite;
+        }
+        
+        @keyframes matrix-fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+        
+        .loading-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #d23669;
+            font-size: 1.5rem;
+            text-align: center;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 20px;
+            background-color: #d23669;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+            margin-left: 3px;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen">
+        <div class="matrix-container" id="matrixContainer"></div>
+        <div class="loading-text">Loading my love for Epaaaww...</div>
+    </div>
+    
+    <div class="content hidden">
+        <div class="love-container">
+            <div class="love-text">I Love You Epaaaww</div>
+        </div>
+        
+        <div class="message-text" id="messageText">
+            <span id="typedMessage"></span><span class="cursor"></span>
+        </div>
+        
+        <div class="audio-player">
+            <audio id="loveAudio" controls autoplay loop>
+                <source src="download (2).m4a" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <div id="audioError" class="audio-error">
+                Audio tidak dapat dimainkan. Pastikan file audio tersedia dan browser mendukung pemutaran audio.
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Create matrix effect
+        function createMatrixEffect() {
+            const container = document.getElementById('matrixContainer');
+            const columns = Math.floor(window.innerWidth / 20);
+            
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = `${i * 20}px`;
+                column.style.animationDuration = `${5 + Math.random() * 10}s`;
+                column.style.animationDelay = `${Math.random() * 5}s`;
+                
+                // Create random characters
+                let chars = '';
+                const length = 20 + Math.floor(Math.random() * 30);
+                for (let j = 0; j < length; j++) {
+                    chars += String.fromCharCode(0x30A0 + Math.random() * 96);
+                }
+                
+                column.textContent = chars;
+                container.appendChild(column);
+            }
+        }
+        
+        // Type message effect
+        function typeMessage() {
+            const message = "haiii epaaa cantiii nyaaa akuu, akuu mauu ngucapinn seberapaa beruntungnyaa akuu punyaa kamuu, kamuu janjii gaakannn ninggalinn akuu kann? janjiii plisss. makasii udaa mauu nerimaa epann";
+            const typedElement = document.getElementById('typedMessage');
+            const cursor = document.querySelector('.cursor');
+            
+            let i = 0;
+            const typing = setInterval(() => {
+                if (i < message.length) {
+                    typedElement.textContent += message.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typing);
+                    cursor.style.display = 'none';
+                }
+            }, 50);
+        }
+        
+        // Initialize everything
+        function init() {
+            createMatrixEffect();
+            
+            // Show content after 3 seconds
+            setTimeout(() => {
+                document.querySelector('.loading-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.querySelector('.loading-screen').style.display = 'none';
+                    document.querySelector('.content').classList.remove('hidden');
+                    
+                    // Start typing effects
+                    const loveText = document.querySelector('.love-text');
+                    const originalText = loveText.textContent;
+                    loveText.textContent = '';
+                    
+                    let i = 0;
+                    const typingEffect = setInterval(() => {
+                        if (i < originalText.length) {
+                            loveText.textContent += originalText.charAt(i);
+                            i++;
+                        } else {
+                            clearInterval(typingEffect);
+                            // Start typing the message after the title is done
+                            setTimeout(typeMessage, 500);
+                        }
+                    }, 150);
+                    
+                    // Audio handling
+                    const audio = document.getElementById('loveAudio');
+                    const audioError = document.getElementById('audioError');
+                    
+                    audio.addEventListener('error', function() {
+                        audioError.style.display = 'block';
+                    });
+                    
+                    document.body.addEventListener('click', function() {
+                        audio.play().catch(e => {
+                            audioError.style.display = 'block';
+                            audioError.textContent = 'Klik/tap layar untuk memutar audio. Beberapa browser memerlukan interaksi pengguna terlebih dahulu.';
+                        });
+                    }, { once: true });
+                    
+                    // Create hearts animation
+                    function createHearts() {
+                        const container = document.querySelector('.love-container');
+                        const heart = document.createElement('div');
+                        heart.className = 'heart';
+                        
+                        heart.style.left = Math.random() * 100 + 'px';
+                        heart.style.animationDuration = (3 + Math.random() * 3) + 's';
+                        
+                        const hue = 330 + Math.random() * 30;
+                        heart.style.backgroundColor = `hsl(${hue}, 100%, 75%)`;
+                        
+                        container.appendChild(heart);
+                        
+                        setTimeout(() => {
+                            heart.remove();
+                        }, 4000);
+                    }
+                    
+                    setInterval(createHearts, 300);
+                }, 500);
+            }, 3000);
+        }
+        
+        window.onload = init;
+    </script>
+</body>
+</html>
